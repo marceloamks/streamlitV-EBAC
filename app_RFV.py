@@ -389,6 +389,36 @@ with tab3:
         fig_bar.update_traces(textposition='outside')
         st.plotly_chart(fig_bar, use_container_width=True)
 
+    # Gráfico de dispersão 3D com amostragem para performance
+    st.markdown("---")
+    st.subheader("🧊 Dispersão 3D — Recência × Frequência × Valor")
+
+    MAX_PONTOS_3D = 500
+    if len(rfv_segmentado) > MAX_PONTOS_3D:
+        df_3d = rfv_segmentado.sample(n=MAX_PONTOS_3D, random_state=42)
+        st.caption(f"⚡ Amostra de {MAX_PONTOS_3D} clientes exibida para garantir fluidez (total: {len(rfv_segmentado)})")
+    else:
+        df_3d = rfv_segmentado.copy()
+
+    fig_3d = px.scatter_3d(
+        df_3d,
+        x='Recência (R)',
+        y='Frequência (F)',
+        z='Valor (V)',
+        color='Segmento',
+        hover_data=['cliente_id'],
+        title='Dispersão 3D dos Clientes por Segmento RFV',
+        labels={
+            'Recência (R)': 'Recência (dias)',
+            'Frequência (F)': 'Frequência (compras)',
+            'Valor (V)': 'Valor Total (R$)'
+        },
+        opacity=0.7
+    )
+    fig_3d.update_traces(marker=dict(size=4))
+    fig_3d.update_layout(height=600)
+    st.plotly_chart(fig_3d, use_container_width=True)
+
 with tab4:
     st.header("Clientes com Menor Recência, Maior Frequência e Maior Valor Gasto")
 
